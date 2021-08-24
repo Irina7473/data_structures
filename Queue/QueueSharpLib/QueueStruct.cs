@@ -21,25 +21,24 @@ namespace QueueSharpLib
 
         public void Push(T value)
         {
-            if (_head == null)
+            var element = new Element<T>(value);
+            if (_head == null)  //  или  Size == 0
             {
-                _head = new Element<T>(value);
-                Console.WriteLine($"head = {_head.Value}");
+                _head = element;
+                _tail = _head;               
             }
-            else if (_tail == null)
+            else if (_head != null &&_tail == null) //  или  Size == 1
             {                
-                _tail = new Element<T>(value, _head, null);
-                _head = new Element<T>(_head.Value, null, _tail);
-                Console.WriteLine($"head = {_head.Value} \t tail={_tail.Value}");
+                _tail = element;
+                _head.Next = _tail;               
             }
             else
             {
-                var e = new Element<T>(value, _head, null);
-                _tail = e;
-                Console.WriteLine($"head = {_head.Value} \t tail={_tail.Value}");
+                var temp = _tail;
+                _tail = element;
+                temp.Next= _tail;              
             }
-
-            Size++;            
+            Size++;                              
         }
                
         public T Pop()
@@ -47,15 +46,9 @@ namespace QueueSharpLib
             if (IsEmpty())
             {
                 throw new IndexOutOfRangeException("Queue is empty");
-            }
-                        
-            var result = _head.Value;            
-            Console.WriteLine($"result = {result}");
-            _head = _head.Next;
-            //_head.Prev = null;
-            
-            Console.WriteLine($"head = {_head.Value}");
-            
+            }                        
+            var result = _head.Value;   
+            _head = _head.Next;            
             Size--;
             return result;
         }
@@ -68,6 +61,24 @@ namespace QueueSharpLib
         public bool IsEmpty()
         {
             return Size == 0 ? true : false;
+        }
+
+        public T First
+        {
+            get
+            {
+                if (IsEmpty()) throw new InvalidOperationException();
+                return _head.Value;
+            }
+        }
+        
+        public T Last
+        {
+            get
+            {
+                if (IsEmpty()) throw new InvalidOperationException();
+                return _tail.Value;
+            }
         }
     }
 }
