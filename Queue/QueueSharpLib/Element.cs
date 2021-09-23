@@ -3,7 +3,7 @@
 namespace QueueSharpLib
 {
     public class Element<T>
-    {
+    {               
         public readonly T Value;
         public Element<T> Next { get; set; }
 

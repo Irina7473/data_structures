@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace QueueSharpLib
-{
-   public class QueueStruct<T>
+{    
+    public class QueueStruct<T>
     {
+        public delegate void Update(string message);                
+        public event Update Info;
+
         private Element<T> _head;
         private Element<T> _tail;
         public int Size { get; private set; }
@@ -25,31 +28,32 @@ namespace QueueSharpLib
             if (_head == null)  //  или  Size == 0
             {
                 _head = element;
-                _tail = _head;               
+                _tail = _head;
+                Info?.Invoke ("Добавлен первый элемент в очередь");
+                
             }
-            else if (_head != null &&_tail == null) //  или  Size == 1
-            {                
-                _tail = element;
-                _head.Next = _tail;               
-            }
+            
             else
             {
                 var temp = _tail;
                 _tail = element;
-                temp.Next= _tail;              
+                temp.Next= _tail;
+                Info?.Invoke ("Добавлен еще один элемент в очередь");
             }
-            Size++;                              
+            Size++;
+            //Info?.Invoke($"Очередь содержит {Size} элемента");
         }
                
         public T Pop()
         {
             if (IsEmpty())
             {
-                throw new IndexOutOfRangeException("Queue is empty");
+                throw new IndexOutOfRangeException("Очередь пуста");
             }                        
             var result = _head.Value;   
-            _head = _head.Next;            
+            _head = _head.Next;
             Size--;
+            Info?.Invoke("Удален элемент из очереди");
             return result;
         }
                
